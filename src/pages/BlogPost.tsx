@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, User, Clock, ArrowLeft, Share2 } from 'lucide-react';
+import { Calendar, User, Clock, ArrowLeft, Share2, ArrowRight } from 'lucide-react';
 
 const BlogPost = () => {
   const { slug } = useParams();
