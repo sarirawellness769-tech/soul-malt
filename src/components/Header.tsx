@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingCart, Leaf } from 'lucide-react';
+import { Menu, X, ShoppingCart, Leaf, User, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const { state: cartState } = useCart();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,13 +93,74 @@ const Header = () => {
 
           {/* Cart & Mobile Menu Button */}
           <div className="flex items-center space-x-4">
+            {/* Wishlist */}
+            {user && (
+              <Link to="/wishlist">
+                <motion.button
+                  className="p-2 rounded-lg transition-colors text-white hover:bg-white/10"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Heart className="w-5 h-5" />
+                </motion.button>
+              </Link>
+            )}
+
+            {/* Cart */}
+            <Link to="/cart" className="relative">
             <motion.button
               className="p-2 rounded-lg transition-colors text-white hover:bg-white/10"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <ShoppingCart className="w-5 h-5" />
+              {cartState.itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
+                  {cartState.itemCount}
+                </span>
+              )}
             </motion.button>
+            </Link>
+
+            {/* User Account */}
+            {user ? (
+              <div className="relative group">
+                <motion.button
+                  className="p-2 rounded-lg transition-colors text-white hover:bg-white/10 flex items-center space-x-2"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <User className="w-5 h-5" />
+                  <span className="hidden sm:block text-sm">{user.name}</span>
+                </motion.button>
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-stone-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="p-2">
+                    <Link
+                      to="/wishlist"
+                      className="block px-3 py-2 text-stone-700 hover:bg-stone-100 rounded-lg transition-colors"
+                    >
+                      My Wishlist
+                    </Link>
+                    <button
+                      onClick={logout}
+                      className="w-full text-left px-3 py-2 text-stone-700 hover:bg-stone-100 rounded-lg transition-colors"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Link to="/auth">
+                <motion.button
+                  className="p-2 rounded-lg transition-colors text-white hover:bg-white/10"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <User className="w-5 h-5" />
+                </motion.button>
+              </Link>
+            )}
 
             {/* Mobile menu button */}
             <button
